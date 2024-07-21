@@ -13,12 +13,5 @@ then
 fi
 
 gleam build -t javascript
-bun build ./build/dev/javascript/random_git/random_git.mjs --target bun --outfile ./dist/randomgit.mjs
-bun build ./dist/randomgit.mjs --minify --target bun --outfile ./dist/randomgit.min.mjs;
-
-cp ./dist/randomgit.mjs ./build.tmp
-echo "main();" >> ./build.tmp
-
-bun build --compile ./build.tmp --outfile ./dist/randomgit --target bun-linux-x64 --minify
-
-rm -f ./build.tmp
+bun build ./build/dev/javascript/random_git/random_git.mjs --minify --target node --outfile ./dist/randomgit.mjs
+bun build ./src/runner.mjs --minify --target node --outfile ./dist/runner.mjs;

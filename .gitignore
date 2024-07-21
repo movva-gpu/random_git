@@ -4,8 +4,3 @@
 erl_crash.dump
 
 /node_modules
-
-build.tmp
-
-# temporary
-/dist

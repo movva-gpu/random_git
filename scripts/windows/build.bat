@@ -16,11 +16,4 @@ if %errorlevel% neq 0 (
 
 gleam build -t javascript
 bun build ".\build\dev\javascript\random_git\random_git.mjs" --target bun --outfile ".\dist\randomgit.mjs"
-bun build ".\dist\randomgit.mjs" --minify --target bun --outfile ".\dist\randomgit.min.mjs"
-
-copy /b ".\dist\randomgit.mjs" ".\build.tmp"
-echo main(); >> ".\build.tmp"
-
-bun build --compile ".\build.tmp" --target bun-windows-x64 --outfile ".\dist\randomgit.exe" --minify
-
-del ".\build.tmp"
+bun build ".\src\runner.mjs" --minify --target bun --outfile ".\dist\runner.mjs"
