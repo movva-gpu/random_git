@@ -5,7 +5,9 @@ import gleamyshell
 pub fn get_config_path() -> Result(String, String) {
   use _ <- result.try_recover(
     gleamyshell.env("XDG_CONFIG_HOME")
-    |> result.map(fn (xdg_config_home) { filepath.join(xdg_config_home, "randomgit") })
+    |> result.map(fn(xdg_config_home) {
+      filepath.join(xdg_config_home, "randomgit")
+    }),
   )
   use home_dir <- result.try(
     gleamyshell.home_directory()
