@@ -1,38 +1,38 @@
 import gleam/io
-import gleam/option.{None}
-import simplifile.{create_directory_all, create_file, describe_error}
-import utils.{exit}
+import simplifile
 
-pub fn create_config_dir(config_path: String) -> Nil {
+pub fn create_config_dir(config_path: String) -> Result(Nil, String) {
   io.println("Creating configuration directory...")
-  case create_directory_all(config_path) {
-    Ok(_) -> io.println("Created configuration directory successfully!")
+  case simplifile.create_directory_all(config_path) {
+    Ok(_) -> {
+      io.println("Created configuration directory successfully!")
+      Ok(Nil)
+    }
     Error(error) ->
-      // 5001 - Unable to create configuration directory
-      exit(
+      Error(
         "Error: Unable to create configuration directory:\n  "
-          <> describe_error(error)
-          <> "\n"
-          <> "Configuration path: "
-          <> config_path,
-        None,
+        <> simplifile.describe_error(error)
+        <> "\n"
+        <> "Configuration path: "
+        <> config_path,
       )
   }
 }
 
-pub fn create_config_file(config_file_path: String) -> Nil {
+pub fn create_config_file(config_file_path: String) -> Result(Nil, String) {
   io.println("Creating configuration file...")
-  case create_file(config_file_path) {
-    Ok(_) -> io.println("Created configuration file successfully!")
+  case simplifile.create_file(config_file_path) {
+    Ok(_) -> {
+      io.println("Created configuration file successfully!")
+      Ok(Nil)
+    }
     Error(error) ->
-      // 5002 - Unable to create configuration file
-      exit(
+      Error(
         "Error: Unable to create configuration file:\n  "
-          <> describe_error(error)
-          <> "\n"
-          <> "Configuration file path: "
-          <> config_file_path,
-        None,
+        <> simplifile.describe_error(error)
+        <> "\n"
+        <> "Configuration file path: "
+        <> config_file_path,
       )
   }
 }
