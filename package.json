@@ -1,6 +1,6 @@
 {
   "name": "random_git",
-  "type": "module",
+  "main": "dist/runner.mjs",
   "scripts": {
     "build:unix": "bash scripts/unix/build.bash",
     "build:windows": "powershell -ExecutionPolicy Bypass scripts/windows/build.ps1",

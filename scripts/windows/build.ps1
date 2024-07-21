@@ -11,12 +11,5 @@ if (!(Get-Command "bun" -ErrorAction SilentlyContinue)) {
 }
 
 gleam build -t javascript
-bun build .\build\dev\javascript\random_git\random_git.mjs --target bun --outfile .\dist\randomgit.mjs
-bun build .\dist\randomgit.mjs --minify --target bun --outfile .\dist\randomgit.min.mjs;
-
-Copy-Item .\dist\randomgit.mjs .\build.tmp
-Write-Output "main();" >> .\build.tmp
-
-bun build --compile .\build.tmp --target bun-windows-x64 --outfile .\dist\randomgit.exe --minify
-
-Remove-Item -Force .\build.tmp
+bun build .\build\dev\javascript\random_git\random_git.mjs --target node --outfile .\dist\randomgit.mjs
+bun build .\src\runner.mjs --minify --target node --outfile .\dist\runner.mjs;
