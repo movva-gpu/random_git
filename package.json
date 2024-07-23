@@ -1,9 +1,13 @@
 {
   "name": "random_git",
   "main": "dist/runner.mjs",
+  "version": "0.1.0",
   "scripts": {
     "build:unix": "bash scripts/unix/build.bash",
     "build:windows": "powershell -ExecutionPolicy Bypass scripts/windows/build.ps1",
     "build:windows-cmd": "cmd /c call scripts/windows/build.bat"
+  },
+  "dependencies": {
+    "@changesets/cli": "^2.27.7"
   }
 }
