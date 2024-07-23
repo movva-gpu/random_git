@@ -1,3 +1,4 @@
+import gleam/io
 import argv
 import commands/help
 import gleam/io
