@@ -1,4 +1,3 @@
-import color
 import gleam/int
 import gleam/io
 import gleam/list
@@ -6,6 +5,7 @@ import gleam/option.{type Option, Some}
 import gleam/string
 import tulip
 import utils
+import utils/color
 import utils/commands
 
 pub const name = "help"

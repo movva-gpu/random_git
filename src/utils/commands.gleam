@@ -1,4 +1,4 @@
-import color
+import utils/color
 
 pub type Argument {
   Mandatory(String)
