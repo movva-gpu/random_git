@@ -3,6 +3,7 @@ import utils/color
 pub type Argument {
   InAngleBrackets(name: String)
   InSquareBrackets(name: String)
+  NoBrackets(name: String)
 }
 
 pub type Command {

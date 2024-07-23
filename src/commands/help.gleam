@@ -42,13 +42,7 @@ pub const all_global_flags = [
 ]
 
 pub fn execute(raw raw: Bool, bad_usage usage: Bool) -> Nil {
-  case raw {
-    False -> {
-      tulip.print(10, "Random Git")
-      color.println_dim(" (current version: N/A)\n")
-    }
-    True -> Nil
-  }
+  utils.hello_message(raw)
   case usage {
     True -> {
       let command = case utils.current_runtime() {
@@ -241,6 +235,7 @@ fn get_arguments_length() {
       length + string.length(argument.name)
       |> int.add(case argument {
         commands.InAngleBrackets(_) | commands.InSquareBrackets(_) -> 2
+        commands.NoBrackets(_) -> 0
       })
       |> int.add(case index == list.length(arguments) - 1 {
         False -> 1
@@ -253,12 +248,11 @@ fn get_arguments_length() {
     |> list.map(fn(command) { command.arguments })
     |> list.map(fn(arguments) {
       list.index_fold(arguments, 0, fn(length, argument, index) {
-        case argument {
-          commands.InAngleBrackets(argument) ->
-            length + string.length(argument) + 2
-          commands.InSquareBrackets(argument) ->
-            length + string.length(argument) + 2
-        }
+        length + string.length(argument.name)
+        |> int.add(case argument {
+          commands.InAngleBrackets(_) | commands.InSquareBrackets(_) -> 2
+          commands.NoBrackets(_) -> 0
+        })
         |> int.add(case index == list.length(arguments) - 1 {
           False -> 1
           True -> 0
@@ -279,6 +273,7 @@ fn print_formatted_arguments(args: List(commands.Argument), raw: Bool) {
           case arg {
             commands.InAngleBrackets(arg) -> "<" <> arg <> ">"
             commands.InSquareBrackets(arg) -> "[" <> arg <> "]"
+            commands.NoBrackets(arg) -> arg
           }
         })
         |> list.index_map(fn(arg, index) {
