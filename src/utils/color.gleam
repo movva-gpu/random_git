@@ -1,4 +1,5 @@
 import gleam/io
+
 pub type AnsiColor {
   Black
   Maroon
@@ -92,6 +93,7 @@ pub fn dim_text(text: String) -> String {
 pub fn print_dim(message: String) -> Nil {
   io.print(dim_text(message))
 }
+
 pub fn println_dim(message: String) -> Nil {
   io.println(dim_text(message))
 }
