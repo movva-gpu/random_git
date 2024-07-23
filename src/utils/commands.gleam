@@ -1,8 +1,8 @@
 import utils/color
 
 pub type Argument {
-  Mandatory(String)
-  Optional(String)
+  InAngleBrackets(name: String)
+  InSquareBrackets(name: String)
 }
 
 pub type Command {

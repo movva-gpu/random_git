@@ -1,3 +1,4 @@
+import commands/config
 import gleam/int
 import gleam/io
 import gleam/list
@@ -17,6 +18,12 @@ pub const all_commands = [
     name: name,
     description: description,
     arguments: [],
+    color: color.Aqua,
+  ),
+  commands.Command(
+    name: config.name,
+    description: config.description,
+    arguments: config.arguments,
     color: color.Aqua,
   ),
 ]
@@ -161,7 +168,6 @@ fn print_formatted_command(
       io.print("  ")
       tulip.print(cl_code, string.pad_right(name, get_command_length(), " "))
       print_formatted_arguments(args, raw)
-      io.print("\t")
       io.println(msg)
     }
     True -> {
@@ -198,12 +204,11 @@ fn print_formatted_global_flag(
         cl_code,
         string.pad_right(
           name,
-          get_command_length() |> int.subtract(string.length("<command>")),
+          get_command_length() |> int.subtract(string.length("<command> ")),
           " ",
         ),
       )
       print_formatted_arguments(args, raw)
-      io.print("\t")
       io.println(msg)
     }
     True -> {
@@ -221,27 +226,82 @@ fn get_command_length() {
   |> list.map(fn(command) { command.name })
   |> list.append(
     all_global_flags
-    |> list.map(fn(flag) { "<command>" <> flag.name }),
+    |> list.map(fn(flag) { "<command> " <> flag.name }),
   )
   |> list.map(string.length)
   |> list.fold(0, int.max)
-  |> int.add(15)
+  |> int.add(4)
+}
+
+fn get_arguments_length() {
+  all_commands
+  |> list.map(fn(command) { command.arguments })
+  |> list.map(fn(arguments) {
+    list.index_fold(arguments, 0, fn(length, argument, index) {
+      length + string.length(argument.name)
+      |> int.add(case argument {
+        commands.InAngleBrackets(_) | commands.InSquareBrackets(_) -> 2
+      })
+      |> int.add(case index == list.length(arguments) - 1 {
+        False -> 1
+        True -> 0
+      })
+    })
+  })
+  |> list.append(
+    all_global_flags
+    |> list.map(fn(command) { command.arguments })
+    |> list.map(fn(arguments) {
+      list.index_fold(arguments, 0, fn(length, argument, index) {
+        case argument {
+          commands.InAngleBrackets(argument) ->
+            length + string.length(argument) + 2
+          commands.InSquareBrackets(argument) ->
+            length + string.length(argument) + 2
+        }
+        |> int.add(case index == list.length(arguments) - 1 {
+          False -> 1
+          True -> 0
+        })
+      })
+    }),
+  )
+  |> list.fold(0, int.max)
+  |> int.add(4)
 }
 
 fn print_formatted_arguments(args: List(commands.Argument), raw: Bool) {
-  use arg <- list.each(args)
-  case arg {
-    commands.Mandatory(arg) -> {
-      case raw {
-        False -> tulip.print(0, "<" <> arg <> ">")
-        True -> io.print("<" <> arg <> ">")
-      }
-    }
-    commands.Optional(arg) -> {
-      case raw {
-        False -> tulip.print(0, "[" <> arg <> "]")
-        True -> io.print("[" <> arg <> "]")
-      }
-    }
-  }
+  let length = get_arguments_length()
+  let arg_length =
+    list.fold(
+      args
+        |> list.map(fn(arg) {
+          case arg {
+            commands.InAngleBrackets(arg) -> "<" <> arg <> ">"
+            commands.InSquareBrackets(arg) -> "[" <> arg <> "]"
+          }
+        })
+        |> list.index_map(fn(arg, index) {
+          case index == list.length(args) - 1 {
+            False -> arg <> " "
+            True -> arg
+          }
+        }),
+      0,
+      fn(length, arg) {
+        case raw {
+          False -> {
+            color.print_dim(arg)
+            length
+            |> int.add(string.length(arg))
+          }
+          True -> {
+            io.print(arg)
+            0
+          }
+        }
+      },
+    )
+
+  io.print(string.repeat(" ", length - arg_length))
 }
