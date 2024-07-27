@@ -1,32 +1,13 @@
 import argv
 import commands/config
 import commands/help
-import gleam/dynamic
 import gleam/io
+import gleam/list
 import gleam/option
 import utils
 import utils/config_checks
-import utils/toml
 
 pub fn main() {
-  let _ =
-    toml.parse(
-      "
-      rootfield = true
-
-      [test]
-      a = true
-
-     [test2]
-      lt = 1700-12-12T00:00:01
-      ",
-    )
-    |> toml.set_field("test.a", dynamic.from(True))
-    |> toml.set_field("test.tessssst", dynamic.from("banana"))
-    |> toml.serialize
-    |> io.debug
-  utils.exit(0)
-
   case utils.check_gh() {
     Ok(_) -> Nil
     Error(err) -> {
@@ -62,6 +43,20 @@ pub fn main() {
       config.get(bad_usage: False, raw: False, field: option.None)
     ["config", "get", field] ->
       config.get(bad_usage: False, raw: False, field: option.Some(field))
+    ["config", "set", field, value] ->
+      config.set(bad_usage: False, raw: False, field: field, value: value)
+    ["config", "set", field, "--", ..values] ->
+      config.set(
+        bad_usage: False,
+        raw: False,
+        field: field,
+        value: list.index_fold(values, "", fn(result, value, index) {
+          case index == list.length(values) - 1 {
+            False -> result <> value <> " "
+            True -> result <> value
+          }
+        }),
+      )
     ["config", "--raw", ..] -> config.help(bad_usage: True, raw: True)
     ["config", ..] -> config.help(bad_usage: True, raw: False)
 

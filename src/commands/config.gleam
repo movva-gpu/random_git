@@ -1,16 +1,19 @@
+import config
+import filepath
+import gleam/dynamic
 import gleam/float
 import gleam/int
 import gleam/io
-import gleam/list
 import gleam/option
-import gleam/string
-import tom
+import gleam/result
+import simplifile
 import tulip
 import utils
 import utils/color
 import utils/commands
-import utils/config_checks
 import utils/config_get
+import utils/config_misc
+import utils/toml
 
 pub const name = "config"
 
@@ -34,23 +37,7 @@ pub fn get(
   utils.hello_message(raw)
   bad_usage(usage, raw)
 
-  case config_checks.check_config_dir() {
-    Ok(_) -> Nil
-    Error(error) -> {
-      io.println_error(error)
-      utils.exit(1)
-    }
-  }
-
-  case config_checks.check_config_file() {
-    Ok(_) -> Nil
-    Error(error) -> {
-      io.println_error(error)
-      utils.exit(1)
-    }
-  }
-
-  let config_file = case config_get.get_config_file() {
+  let file_content = case config_get.get_config_file() {
     Ok(content) -> content
     Error(error) -> {
       io.println_error(error)
@@ -58,87 +45,102 @@ pub fn get(
     }
   }
 
-  let config = case tom.parse(config_file) {
+  let field = case field {
+    option.Some(field) -> field
+    option.None -> {
+      tulip.println(color.get_ansi_color_code(color.Yellow), file_content)
+      utils.exit(0)
+    }
+  }
+
+  let parsed = case toml.parse(file_content) {
     Ok(parsed) -> parsed
-    Error(_) -> {
-      io.println_error("Error: TOML parser failed to parse configuration.")
+    Error(error) -> {
+      io.println_error(error)
       utils.exit(1)
     }
   }
 
-  case field {
-    option.Some(field) -> {
-      case string.contains(field, ".") {
-        True -> {
-          case list.length(string.split(field, ".")) {
-            2 -> Nil
-            _ ->
-              tulip.println(
-                color.get_ansi_color_code(color.Red),
-                "Error: The field should be formatted in the following way: category.field"
-                  <> "\nNot like this: "
-                  <> field,
-              )
+  case toml.get_field(parsed, field) {
+    Ok(value) -> {
+      case dynamic.int(value) {
+        Ok(value) -> io.println(int.to_string(value))
+        Error(_) ->
+          case dynamic.float(value) {
+            Ok(value) -> io.println(float.to_string(value))
+            Error(_) ->
+              case dynamic.bool(value) {
+                Ok(True) -> io.println("true")
+                Ok(False) -> io.println("false")
+                Error(_) ->
+                  case dynamic.string(value) {
+                    Ok(value) -> io.println(value)
+                    Error(_) ->
+                      io.println(
+                        "Error: Something wrong occured while decoding the value.",
+                      )
+                  }
+              }
           }
-          let category = case list.first(string.split(field, ".")) {
-            Ok(category) -> category
-            Error(_) -> {
-              tulip.println(
-                color.get_ansi_color_code(color.Red),
-                "Error: The field should be formatted in the following way: category.field"
-                  <> "\nNot like this: "
-                  <> field,
-              )
-              utils.exit(1)
-            }
-          }
-          let field = case list.last(string.split(field, ".")) {
-            Ok(field) -> field
-            Error(_) -> {
-              tulip.println(
-                color.get_ansi_color_code(color.Red),
-                "Error: The field should be formatted in the following way: category.field"
-                  <> "\nNot like this: "
-                  <> field,
-              )
-              utils.exit(1)
-            }
-          }
-
-          case tom.get(config, [category, field]) {
-            Ok(value) -> format_toml(value, category, field, False)
-            Error(_) -> {
-              tulip.println(
-                color.get_ansi_color_code(color.Red),
-                "Error: The value at "
-                  <> category
-                  <> "."
-                  <> field
-                  <> " does not exist.",
-              )
-              utils.exit(1)
-            }
-          }
-        }
-        False -> {
-          tulip.println(
-            color.get_ansi_color_code(color.Red),
-            "Error: The field should be formatted in the following way: category.field"
-              <> "\nNot like this: "
-              <> field,
-          )
-          utils.exit(1)
-        }
       }
     }
-    option.None ->
-      case config_file {
-        "" -> io.println("Empty configuration file.")
-        config -> io.println(config)
-      }
+    Error(error) -> {
+      io.println_error(error)
+      utils.exit(1)
+    }
+  }
+}
+
+pub fn set(
+  bad_usage usage: Bool,
+  raw raw: Bool,
+  field field: String,
+  value value: String,
+) -> Nil {
+  utils.hello_message(raw)
+  bad_usage(usage, raw)
+
+  let file_content = case config_get.get_config_file() {
+    Ok(content) -> content
+    Error(error) -> {
+      io.println_error(error)
+      utils.exit(1)
+    }
   }
 
-  Nil
+  let toml =
+    case toml.parse(file_content) {
+      Ok(parsed) -> parsed
+      Error(error) -> {
+        io.println_error(error)
+        utils.exit(1)
+      }
+    }
+    |> toml.set_field(field, dynamic.from(value))
+    |> toml.serialize
+
+  case
+    result.try(config_misc.get_config_path(), fn(config_path) {
+      simplifile.write(
+        contents: toml,
+        to: filepath.join(config_path, config.config_file_name),
+      )
+      |> result.map_error(fn(error) {
+        "Error: Unable to write the new contents to the configuration file."
+        <> "\n"
+        <> "  Reason: "
+        <> simplifile.describe_error(error)
+        <> "  Configuration file path: "
+        <> config_path
+      })
+    })
+  {
+    Ok(_) -> io.println("Done!")
+    Error(error) -> {
+      io.println_error(error)
+      utils.exit(1)
+    }
+  }
 }
 
 fn bad_usage(usage: Bool, raw: Bool) -> Nil {
@@ -195,94 +197,5 @@ fn bad_usage(usage: Bool, raw: Bool) -> Nil {
       utils.exit(1)
     }
     False -> Nil
-  }
-}
-
-fn format_toml(value: tom.Toml, category: String, field: String, in_array: Bool) {
-  case in_array {
-    True -> Nil
-    False -> io.print(category <> "." <> field <> " -> ")
-  }
-
-  case value {
-    tom.InlineTable(_) | tom.Table(_) | tom.ArrayOfTables(_) -> {
-      io.print_error(
-        "Error: Inline Tables and Arrays of Tables are not yet supported.",
-      )
-    }
-    tom.String(value) -> io.print(value)
-    tom.Array(value) -> {
-      io.print("[ ")
-      list.index_map(value, fn(array_value, index) {
-        format_toml(array_value, category, field, True)
-        case index == list.length(value) - 1 {
-          True -> Nil
-          False -> io.print(", ")
-        }
-      })
-      io.print(" ]")
-    }
-    tom.Bool(value) ->
-      case value {
-        True -> io.print("true")
-        False -> io.print("false")
-      }
-    tom.Date(value) ->
-      io.print(
-        string.pad_left(int.to_string(value.year), 4, "0")
-        <> "-"
-        <> string.pad_left(int.to_string(value.month), 2, "0")
-        <> "-"
-        <> string.pad_left(int.to_string(value.day), 2, "0"),
-      )
-    tom.DateTime(value) ->
-      io.print(
-        string.pad_left(int.to_string(value.date.year), 4, "0")
-        <> "-"
-        <> string.pad_left(int.to_string(value.date.month), 2, "0")
-        <> "-"
-        <> string.pad_left(int.to_string(value.date.day), 2, "0")
-        <> "T"
-        <> string.pad_left(int.to_string(value.time.hour), 2, "0")
-        <> ":"
-        <> string.pad_left(int.to_string(value.time.minute), 2, "0")
-        <> ":"
-        <> string.pad_left(int.to_string(value.time.second), 2, "0")
-        <> case value.offset {
-          tom.Local -> ""
-          tom.Offset(sign, hours, minutes) -> {
-            case sign {
-              tom.Positive ->
-                "+" <> int.to_string(hours) <> int.to_string(minutes)
-              tom.Negative ->
-                "-" <> int.to_string(hours) <> int.to_string(minutes)
-            }
-          }
-        },
-      )
-    tom.Float(value) -> io.print(float.to_string(value))
-    tom.Infinity(sign) ->
-      io.print(
-        case sign {
-          tom.Positive -> "+"
-          tom.Negative -> "-"
-        }
-        <> "∞",
-      )
-    tom.Int(value) -> io.print(int.to_string(value))
-    tom.Nan(_) -> io.print("NaN")
-    tom.Time(value) ->
-      io.print(
-        string.pad_left(int.to_string(value.hour), 2, "0")
-        <> ":"
-        <> string.pad_left(int.to_string(value.minute), 2, "0")
-        <> ":"
-        <> string.pad_left(int.to_string(value.second), 2, "0"),
-      )
-  }
-
-  case in_array {
-    True -> Nil
-    False -> io.print("\n")
   }
 }

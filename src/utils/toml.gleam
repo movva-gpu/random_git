@@ -3,20 +3,25 @@ import gleam/float
 import gleam/int
 
 @external(javascript, "../toml_ffi.mjs", "toml_parse")
-pub fn parse(toml: String) -> dynamic.Dynamic
+fn parse_toml(toml: String) -> dynamic.Dynamic
+
+pub fn parse(toml: String) -> Result(dynamic.Dynamic, String) {
+  let toml = parse_toml(toml)
+  case dynamic.string(toml) {
+    Error(_) -> Ok(toml)
+    Ok(error) ->
+      case error {
+        "Error: " <> error -> Error("Error: " <> error)
+        _ ->
+          Error(
+            "Error: Unknown error occured when trying to parse the configuration file.",
+          )
+      }
+  }
+}
 
 @external(javascript, "../toml_ffi.mjs", "get_toml_field")
 fn get_toml_field(toml: dynamic.Dynamic, field: String) -> String
-
-@external(javascript, "../toml_ffi.mjs", "set_toml_field")
-pub fn set_field(
-  toml: dynamic.Dynamic,
-  field: String,
-  value: dynamic.Dynamic,
-) -> dynamic.Dynamic
-
-@external(javascript, "../toml_ffi.mjs", "toml_stringify")
-pub fn serialize(toml: dynamic.Dynamic) -> String
 
 pub fn get_field(
   toml: dynamic.Dynamic,
@@ -41,3 +46,13 @@ pub fn get_field(
     }
   }
 }
+
+@external(javascript, "../toml_ffi.mjs", "set_toml_field")
+pub fn set_field(
+  toml: dynamic.Dynamic,
+  field: String,
+  value: dynamic.Dynamic,
+) -> dynamic.Dynamic
+
+@external(javascript, "../toml_ffi.mjs", "toml_stringify")
+pub fn serialize(toml: dynamic.Dynamic) -> String
