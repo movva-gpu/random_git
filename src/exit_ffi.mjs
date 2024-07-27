@@ -5,5 +5,5 @@
  * @return {void} This function does not return anything.
  */
 export function os_exit(code) {
-    process.exit(code);
+  process.exit(code);
 }

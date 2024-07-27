@@ -8,6 +8,7 @@
     "build:windows-cmd": "cmd /c call scripts/windows/build.bat"
   },
   "dependencies": {
-    "@changesets/cli": "^2.27.7"
+    "@changesets/cli": "^2.27.7",
+    "smol-toml": "^1.3.0"
   }
 }
