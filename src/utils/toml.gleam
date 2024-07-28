@@ -48,11 +48,24 @@ pub fn get_field(
 }
 
 @external(javascript, "../toml_ffi.mjs", "set_toml_field")
-pub fn set_field(
+fn set_field_toml(
   toml: dynamic.Dynamic,
   field: String,
   value: dynamic.Dynamic,
 ) -> dynamic.Dynamic
+
+pub fn set_field(
+  toml: dynamic.Dynamic,
+  field: String,
+  value: dynamic.Dynamic,
+) -> Result(dynamic.Dynamic, String) {
+  let result = set_field_toml(toml, field, value)
+  case dynamic.string(result) {
+    Ok("Error: " <> error) -> Error("Error: " <> error)
+    Ok(_) -> Error("Error: Impossible to set the field " <> field)
+    Error(_) -> Ok(result)
+  }
+}
 
 @external(javascript, "../toml_ffi.mjs", "toml_stringify")
 pub fn serialize(toml: dynamic.Dynamic) -> String

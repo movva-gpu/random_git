@@ -108,15 +108,22 @@ pub fn set(
     }
   }
 
-  let toml =
-    case toml.parse(file_content) {
-      Ok(parsed) -> parsed
-      Error(error) -> {
-        io.println_error(error)
-        utils.exit(1)
-      }
+  let parsed = case toml.parse(file_content) {
+    Ok(parsed) -> parsed
+    Error(error) -> {
+      io.println_error(error)
+      utils.exit(1)
     }
+  }
+
+  let toml =
+    parsed
     |> toml.set_field(field, dynamic.from(value))
+    |> result.map_error(fn(error) {
+      io.println_error(error)
+      utils.exit(1)
+    })
+    |> result.unwrap(parsed)
     |> toml.serialize
 
   case

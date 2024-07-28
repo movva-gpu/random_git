@@ -1,4 +1,5 @@
 import TOML from "smol-toml";
+import { LOCALES, ToWords } from "to-words";
 
 /**
  * @param {string} toml The **TOML**
@@ -86,7 +87,24 @@ export const set_toml_field = (toml, field, value) => {
   const field_arr = field.split(".");
 
   if (field_arr.length !== 2)
-    return "Error: No support for other than two length fields.";
+    return (
+      "Error: No support for other than two levels deep fields.\n" +
+      "       The field " +
+      field +
+      " is " +
+      new ToWords({
+        localeCode: "en-IN",
+        converterOptions: {
+          ignoreDecimal: false,
+          ignoreZeroCurrency: false,
+        },
+      })
+        .convert(field_arr.length)
+        .toLowerCase() +
+      " " +
+      (field_arr.length === 1 ? "level" : "levels") +
+      " deep."
+    );
 
   try {
     toml[field_arr[0]][field_arr[1]] = new TOML.TomlDate(
