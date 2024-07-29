@@ -10,11 +10,12 @@ if (!(Get-Command "bun" -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-gleam clean
-gleam deps install
+gleam clean;
 
-bun install --frozen-lockfile
+if ($?) { gleam deps download }
 
-gleam build -t javascript
-bun build .\build\dev\javascript\random_git\random_git.mjs --target node --outfile .\dist\randomgit.mjs
-bun build .\src\runner.mjs --minify --target node --outfile .\dist\runner.mjs;
+if ($?) { bun install --frozen-lockfile }
+
+if ($?) { gleam build -t javascript }
+if ($?) { bun build .\build\dev\javascript\random_git\random_git.mjs --target node --outfile .\dist\randomgit.mjs }
+if ($?) { bun build .\src\runner.mjs --minify --target node --outfile .\dist\runner.mjs };
