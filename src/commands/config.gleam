@@ -237,6 +237,32 @@ pub fn set(
   }
 }
 
+pub fn list(bad_usage usage: Bool, raw raw: Bool) {
+  utils.hello_message(raw)
+  print_bad_usage(usage, raw)
+
+  list.index_map(config.config_fields, fn(field, index) {
+    io.println(case field {
+      config.Category(name) ->
+        case index {
+          0 -> "[" <> name <> "]"
+          _ -> "\n[" <> name <> "]"
+        }
+      config.Field(name, ftype) ->
+        name
+        <> ": "
+        <> case ftype {
+          config.BoolField -> "boolean (true/false)"
+          config.StringField -> "string (e.g. \"a string\")"
+          config.IntField -> "integer (e.g. 1, 42, 504, ...)"
+          config.FloatField -> "float (e.g. 1.1, 4.2, ...)"
+        }
+    })
+  })
+
+  Nil
+}
+
 fn print_bad_usage(usage: Bool, raw: Bool) -> Nil {
   case usage {
     True -> {

@@ -37,12 +37,14 @@ pub fn main() {
     ["config", "--help"] -> config.help(bad_usage: False, raw: False)
     ["config", "--help", "--raw"] | ["config", "--raw", "--help"] ->
       config.help(bad_usage: False, raw: True)
+
     ["config", "get", "-a"] ->
       config.get(bad_usage: False, raw: False, field: option.None)
     ["config", "get", "--all"] ->
       config.get(bad_usage: False, raw: False, field: option.None)
     ["config", "get", field] ->
       config.get(bad_usage: False, raw: False, field: option.Some(field))
+
     ["config", "set", field, value] ->
       config.set(bad_usage: False, raw: False, field: field, value: value)
     ["config", "set", field, "--", ..values] ->
@@ -57,6 +59,12 @@ pub fn main() {
           }
         }),
       )
+
+    ["config", "list"] -> config.list(bad_usage: False, raw: False)
+    ["config", "list", "--raw"] -> config.list(bad_usage: False, raw: True)
+    ["config", "list", "--raw", ..] -> config.list(bad_usage: True, raw: True)
+    ["config", "list", ..] -> config.list(bad_usage: True, raw: False)
+
     ["config", "--raw", ..] -> config.help(bad_usage: True, raw: True)
     ["config", ..] -> config.help(bad_usage: True, raw: False)
 
