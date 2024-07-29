@@ -25,7 +25,8 @@
     "build:windows-cmd": "cmd /c call scripts/windows/build.bat",
     "format": "gleam format && prettier . -w",
     "format:check": "gleam format --check && prettier . -c",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "release": "bun build:unix && bunx changeset publish"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.7",
