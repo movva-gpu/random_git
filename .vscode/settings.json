@@ -1,22 +1,22 @@
 {
-    "cSpell.words": [
-        "colour",
-        "Datapacks",
-        "deno",
-        "Eisdir",
-        "Enoent",
-        "erlef",
-        "gleamyshell",
-        "gleeunit",
-        "hayleigh",
-        "lpil",
-        "outfile",
-        "println",
-        "randomgit",
-        "rebar",
-        "shellout",
-        "simplifile",
-        "stdlib",
-        "thoas"
-    ]
+  "cSpell.words": [
+    "colour",
+    "Datapacks",
+    "deno",
+    "Eisdir",
+    "Enoent",
+    "erlef",
+    "gleamyshell",
+    "gleeunit",
+    "hayleigh",
+    "lpil",
+    "outfile",
+    "println",
+    "randomgit",
+    "rebar",
+    "shellout",
+    "simplifile",
+    "stdlib",
+    "thoas"
+  ]
 }

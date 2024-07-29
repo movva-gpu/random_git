@@ -1,9 +1,9 @@
 {
-    "recommendations": [
-        "oven.bun-vscode",
-        "erlang-ls.erlang-ls",
-        "gleam.gleam",
-        "streetsidesoftware.code-spell-checker",
-        "ms-vscode.powershell"
-    ]
+  "recommendations": [
+    "oven.bun-vscode",
+    "erlang-ls.erlang-ls",
+    "gleam.gleam",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode.powershell"
+  ]
 }
