@@ -5,7 +5,10 @@
   "license": "MIT",
   "description": "A CLI that picks one of your github repos and clones it.",
   "keywords": [
-    "cli", "gh", "github cli", "gleam"
+    "cli",
+    "gh",
+    "github cli",
+    "gleam"
   ],
   "author": {
     "name": "Danyella Strikann",
