@@ -1,21 +1,21 @@
-name: Format check
-
+name: CI
 on:
   push:
     branches:
-      - master
-      - main
-  pull_request:
+      - "**"
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "26.0.2"
           gleam-version: "1.3.2"
           rebar3-version: "3"
+
+      - run: bun install --frozen-lockfile
       - run: gleam deps download
-      - run: gleam format --check
+      - run: bun format:check && bun lint && bun build:unix
