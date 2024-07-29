@@ -1,13 +1,15 @@
 {
   "name": "random_git",
-  "main": "dist/runner.mjs",
-  "version": "0.1.0",
+  "module": "./dist/runner.mjs",
+  "version": "0.1.2",
+  "license": "MIT",
   "scripts": {
     "build:unix": "bash scripts/unix/build.bash",
     "build:windows": "powershell -ExecutionPolicy Bypass scripts/windows/build.ps1",
     "build:windows-cmd": "cmd /c call scripts/windows/build.bat",
-    "format": "gleam format; prettier . -w",
-    "format:check": "gleam format --check; prettier . -c"
+    "format": "gleam format && prettier . -w",
+    "format:check": "gleam format --check && prettier . -c",
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.7",
