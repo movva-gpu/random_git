@@ -1,0 +1,17 @@
+*.beam
+*.ez
+/build
+erl_crash.dump
+
+/node_modules
+/src
+
+/.changeset
+/scripts
+/.vscode
+/.github
+.prettierignore
+bun.lockb
+eslint.config.mjs
+gleam.toml
+manifest.toml
