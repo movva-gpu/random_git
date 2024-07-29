@@ -1,4 +1,4 @@
-import commands/config
+// import commands/config
 import gleam/int
 import gleam/io
 import gleam/list
@@ -20,12 +20,12 @@ pub const all_commands = [
     arguments: [],
     color: color.Aqua,
   ),
-  commands.Command(
-    name: config.name,
-    description: config.description,
-    arguments: config.arguments,
-    color: color.Aqua,
-  ),
+  // commands.Command(
+//   name: config.name,
+//   description: config.description,
+//   arguments: config.arguments,
+//   color: color.Aqua,
+// ),
 ]
 
 pub const all_global_flags = [
