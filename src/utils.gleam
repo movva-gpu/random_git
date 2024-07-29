@@ -49,7 +49,7 @@ pub fn exit(code: Int) -> a
 pub fn hello_message(raw: Bool) -> Nil {
   case raw {
     False -> {
-      tulip.print(color.get_ansi_color_code(color.Lime), "Random Git")
+      tulip.print(color.get_ansi_color_code(color.Fuchsia), "Random Git")
       color.println_dim(" (current version: N/A)\n")
     }
     True -> Nil

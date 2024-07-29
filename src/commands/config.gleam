@@ -4,6 +4,7 @@ import gleam/dynamic
 import gleam/float
 import gleam/int
 import gleam/io
+import gleam/list
 import gleam/option
 import gleam/result
 import simplifile
@@ -20,13 +21,99 @@ pub const name = "config"
 pub const description = "Sets or get the value from the configuration"
 
 pub const arguments = [
-  commands.InAngleBrackets("set|get"), commands.NoBrackets("category.field"),
-  commands.InSquareBrackets("value"),
+  commands.InAngleBrackets("set|get|list"),
+  commands.NoBrackets("category.field"), commands.InSquareBrackets("value"),
+]
+
+const subcommands = [
+  commands.Command(
+    name: "get",
+    description: "Gets the value of a field in the configuration and prints it.",
+    arguments: [
+      commands.NoBrackets("-a|--all"),
+      commands.InSquareBrackets("category.field"),
+    ],
+    color: color.Lime,
+  ),
+  commands.Command(
+    name: "set",
+    description: "Sets the value of a field in the configuration.",
+    arguments: [
+      commands.NoBrackets("category.field"), commands.InAngleBrackets("value"),
+    ],
+    color: color.Lime,
+  ),
+  commands.Command(
+    name: "list",
+    description: "Lists the available fields in the configuration.",
+    arguments: [],
+    color: color.Lime,
+  ),
+]
+
+const options = [
+  commands.FlagOrOption(
+    name: "-a | --all",
+    description: "Use it with get to get all the fields",
+    arguments: [],
+  ),
 ]
 
 pub fn help(bad_usage usage: Bool, raw raw: Bool) -> Nil {
   utils.hello_message(raw)
-  bad_usage(usage, raw)
+  print_bad_usage(usage, raw)
+
+  case raw {
+    False -> {
+      tulip.print(color.get_ansi_color_code(color.Lime), "Description")
+      color.print_dim(":")
+      io.print(" ")
+      io.println(description)
+      io.print("\n")
+
+      print_usage(raw)
+
+      tulip.print(color.get_ansi_color_code(color.Lime), "Commands")
+      color.println_dim(":")
+    }
+    True -> io.println("Commands:")
+  }
+
+  list.each(subcommands, fn(command) {
+    commands.print_formatted_command(
+      command.name,
+      option.Some(command.color),
+      command.arguments,
+      command.description,
+      raw,
+      subcommands,
+      options,
+      False,
+    )
+  })
+
+  case raw {
+    False -> {
+      io.println("")
+      tulip.print(color.get_ansi_color_code(color.Silver), "Options")
+      color.print_dim(":")
+      io.println(" ")
+    }
+    True -> io.println("Options:")
+  }
+
+  list.each(options, fn(option) {
+    commands.print_formatted_global_flag(
+      option.name,
+      option.Some(color.Silver),
+      option.arguments,
+      option.description,
+      raw,
+      subcommands,
+      options,
+      False,
+    )
+  })
 }
 
 pub fn get(
@@ -35,7 +122,7 @@ pub fn get(
   field field: option.Option(String),
 ) -> Nil {
   utils.hello_message(raw)
-  bad_usage(usage, raw)
+  print_bad_usage(usage, raw)
 
   let file_content = case config_get.get_config_file() {
     Ok(content) -> content
@@ -98,7 +185,7 @@ pub fn set(
   value value: String,
 ) -> Nil {
   utils.hello_message(raw)
-  bad_usage(usage, raw)
+  print_bad_usage(usage, raw)
 
   let file_content = case config_get.get_config_file() {
     Ok(content) -> content
@@ -118,7 +205,7 @@ pub fn set(
 
   let toml =
     parsed
-    |> toml.set_field(field, dynamic.from(value))
+    |> toml.set_field(field, value)
     |> result.map_error(fn(error) {
       io.println_error(error)
       utils.exit(1)
@@ -150,7 +237,7 @@ pub fn set(
   }
 }
 
-fn bad_usage(usage: Bool, raw: Bool) -> Nil {
+fn print_bad_usage(usage: Bool, raw: Bool) -> Nil {
   case usage {
     True -> {
       let command = case utils.current_runtime() {
@@ -204,5 +291,32 @@ fn bad_usage(usage: Bool, raw: Bool) -> Nil {
       utils.exit(1)
     }
     False -> Nil
+  }
+}
+
+pub fn print_usage(raw: Bool) {
+  let command = case utils.current_runtime() {
+    Ok(utils.Bun) -> "bunx"
+    Ok(utils.Node) -> "npx"
+    Error(error) -> {
+      io.println_error(error)
+      utils.exit(1)
+    }
+  }
+  case raw {
+    False -> {
+      io.print("Usage: " <> color.dim_text("$") <> " ")
+      tulip.print(
+        color.get_ansi_color_code(color.Aqua),
+        command <> " randomgit config ",
+      )
+
+      tulip.print(color.get_ansi_color_code(color.Blue), "[...flags] ")
+
+      io.println(
+        "<command> [...arguments] " <> color.dim_text("[...options]\n"),
+      )
+    }
+    True -> Nil
   }
 }

@@ -57,8 +57,21 @@ fn set_field_toml(
 pub fn set_field(
   toml: dynamic.Dynamic,
   field: String,
-  value: dynamic.Dynamic,
+  value: String,
 ) -> Result(dynamic.Dynamic, String) {
+  let value = case int.parse(value) {
+    Ok(int) -> dynamic.from(int)
+    Error(_) ->
+      case float.parse(value) {
+        Ok(float) -> dynamic.from(float)
+        Error(_) ->
+          case value {
+            "true" -> dynamic.from(True)
+            "false" -> dynamic.from(False)
+            _ -> dynamic.from(value)
+          }
+      }
+  }
   let result = set_field_toml(toml, field, value)
   case dynamic.string(result) {
     Ok("Error: " <> error) -> Error("Error: " <> error)
