@@ -1,5 +1,5 @@
 import TOML from "smol-toml";
-import { LOCALES, ToWords } from "to-words";
+import { ToWords } from "to-words";
 
 /**
  * @param {string} toml The **TOML**
