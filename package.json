@@ -3,30 +3,13 @@
   "module": "./dist/runner.mjs",
   "version": "0.1.2",
   "license": "MIT",
-  "description": "A CLI that picks one of your github repos and clones it.",
-  "keywords": [
-    "cli",
-    "gh",
-    "github cli",
-    "gleam"
-  ],
-  "author": {
-    "name": "Danyella Strikann",
-    "email": "danyellastrikann@duck.com",
-    "url": "https://danyella.works"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/movva-gpu/random_git.git"
-  },
   "scripts": {
     "build:unix": "bash scripts/unix/build.bash",
     "build:windows": "powershell -ExecutionPolicy Bypass scripts/windows/build.ps1",
     "build:windows-cmd": "cmd /c call scripts/windows/build.bat",
     "format": "gleam format && prettier . -w",
     "format:check": "gleam format --check && prettier . -c",
-    "lint": "eslint src/",
-    "release": "bun build:unix && bunx changeset publish"
+    "lint": "eslint src/"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.7",
