@@ -12,6 +12,11 @@ then
     exit
 fi
 
+gleam clean
+gleam deps install
+
+bun install --frozen-lockfile
+
 gleam build -t javascript
 bun build ./build/dev/javascript/random_git/random_git.mjs --minify --target node --outfile ./dist/randomgit.mjs
 bun build ./src/runner.mjs --minify --target node --outfile ./dist/runner.mjs;
