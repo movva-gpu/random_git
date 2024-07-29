@@ -1,6 +1,6 @@
-import gleam/io
 import argv
 import commands/help
+import gleam/io
 import gleam/io
 import utils
 import utils/config_checks
