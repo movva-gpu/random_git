@@ -1,7 +1,7 @@
 {
   "name": "random_git",
   "module": "./dist/runner.mjs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "scripts": {
     "build:unix": "bash scripts/unix/build.bash",
