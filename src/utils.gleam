@@ -2,6 +2,8 @@ import argv
 import gleam/result
 import gleam/string
 import gleamyshell
+import tulip
+import utils/color
 
 pub fn check_gh() -> Result(Nil, String) {
   gleamyshell.which("gh")
@@ -43,3 +45,13 @@ pub fn current_runtime() -> Result(Runtime, String) {
 
 @external(javascript, "./exit_ffi.mjs", "os_exit")
 pub fn exit(code: Int) -> a
+
+pub fn hello_message(raw: Bool) -> Nil {
+  case raw {
+    False -> {
+      tulip.print(color.get_ansi_color_code(color.Fuchsia), "Random Git")
+      color.println_dim(" (current version: N/A)\n")
+    }
+    True -> Nil
+  }
+}

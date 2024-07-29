@@ -16,6 +16,7 @@
     "rebar",
     "shellout",
     "simplifile",
+    "smol",
     "stdlib",
     "thoas"
   ]

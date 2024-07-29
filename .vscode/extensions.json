@@ -4,6 +4,7 @@
     "erlang-ls.erlang-ls",
     "gleam.gleam",
     "streetsidesoftware.code-spell-checker",
-    "ms-vscode.powershell"
+    "ms-vscode.powershell",
+    "bungcip.better-toml"
   ]
 }
