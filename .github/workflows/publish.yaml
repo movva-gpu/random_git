@@ -26,3 +26,5 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: bun build:unix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
