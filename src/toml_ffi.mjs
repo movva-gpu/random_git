@@ -61,8 +61,7 @@ export const get_toml_field = (toml, field) => {
     return "Error: undefined";
   }
 
-  if (to_return === undefined || to_return === null)
-    return "Error: undefined";
+  if (to_return === undefined || to_return === null) return "Error: undefined";
 
   if (typeof to_return === "string") to_return = '"' + to_return + '"';
 
