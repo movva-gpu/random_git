@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "license": "MIT",
   "description": "A CLI that picks one of your github repos and clones it.",
+  "private": true,
   "keywords": [
     "cli",
     "gh",
