@@ -58,11 +58,11 @@ export const get_toml_field = (toml, field) => {
   try {
     to_return = toml[field_arr[0]][field_arr[1]];
   } catch (_e) {
-    return "Error: undefined";
+    return "Error: Field does not exist";
   }
 
   if (to_return === undefined || to_return === null)
-    return "Error: undefined";
+    return "Error: Field does not exist";
 
   if (typeof to_return === "string") to_return = '"' + to_return + '"';
 
