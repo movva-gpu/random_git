@@ -13,11 +13,9 @@ pub type FieldType {
 }
 
 pub const config_fields = [
-  Category(name: "github"), Field(name: "github.token", ftype: StringField),
-  Field(name: "github.username", ftype: StringField),
-  Category(name: "directories"),
-  Field(name: "directories.repos", ftype: StringField),
-  Category(name: "settings"),
-  Field(name: "settings.auto_clone", ftype: BoolField),
-  Field(name: "settings.forks", ftype: BoolField),
+  Category(name: "github"), Field(name: "token", ftype: StringField),
+  Field(name: "username", ftype: StringField), Category(name: "directories"),
+  Field(name: "repos", ftype: StringField), Category(name: "settings"),
+  Field(name: "auto_clone", ftype: BoolField),
+  Field(name: "forks", ftype: BoolField),
 ]

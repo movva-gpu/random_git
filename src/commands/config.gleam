@@ -7,7 +7,6 @@ import gleam/io
 import gleam/list
 import gleam/option
 import gleam/result
-import gleam/string
 import simplifile
 import tulip
 import utils
@@ -123,25 +122,6 @@ pub fn get(
   field field: option.Option(String),
 ) -> Nil {
   utils.hello_message(raw)
-
-  case field {
-    option.Some("github.token")
-    | option.Some("github.username")
-    | option.Some("directories.repos")
-    | option.Some("settings.auto_clone")
-    | option.Some("settings.forks") -> Nil
-    option.Some(field) -> {
-      io.println_error(
-        "Error: "
-        <> field
-        <> " isn't an available field.\n"
-        <> "Hint: Run the config list command!",
-      )
-      utils.exit(1)
-    }
-    option.None -> Nil
-  }
-
   print_bad_usage(usage, raw)
 
   let file_content = case config_get.get_config_file() {
@@ -205,24 +185,6 @@ pub fn set(
   value value: String,
 ) -> Nil {
   utils.hello_message(raw)
-
-  let usage = case field {
-    "github.token"
-    | "github.username"
-    | "directories.repos"
-    | "settings.auto_clone"
-    | "settings.forks" -> usage
-    field -> {
-      io.println_error(
-        "Error: "
-        <> field
-        <> " isn't an available field.\n"
-        <> "Hint: Run the config list command!",
-      )
-      utils.exit(1)
-    }
-  }
-
   print_bad_usage(usage, raw)
 
   let file_content = case config_get.get_config_file() {
@@ -287,8 +249,8 @@ pub fn list(bad_usage usage: Bool, raw raw: Bool) {
           _ -> "\n[" <> name <> "]"
         }
       config.Field(name, ftype) ->
-        result.unwrap(list.last(string.split(name, ".")), "N/A")
-        <> " = "
+        name
+        <> ": "
         <> case ftype {
           config.BoolField -> "boolean (true/false)"
           config.StringField -> "string (e.g. \"a string\")"
