@@ -1,5 +1,11 @@
 # random_git
 
+## 0.2.1
+
+### Patch Changes
+
+- 983516e: Now errors when using a non-existing field (config set/get)
+
 ## 0.2.0
 
 ### Minor Changes
