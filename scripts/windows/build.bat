@@ -19,4 +19,6 @@ gleam deps download && ^
 bun install --frozen-lockfile && ^
 gleam build -t javascript && ^
 bun build ".\build\dev\javascript\random_git\random_git.mjs" --target bun --outfile ".\dist\randomgit.mjs" && ^
-bun build ".\src\runner.mjs" --minify --target bun --outfile ".\dist\runner.mjs"
+bun build ".\src\runner.mjs" --minify --target bun --outfile ".\dist\runner.mjs" && ^
+del ".\dist\randomgit.mjs" && ^
+ren ".\dist\runner.mjs" "randomgit.mjs"

@@ -1,10 +1,16 @@
 # random_git
 
+## 0.2.1
+
+### Patch Changes
+
+- 983516e: Now errors when using a non-existing field (config set/get)
+
 ## 0.2.0
 
 ### Minor Changes
 
-- 67595d6: Adds the config command. It allows the user to set and get values from the configuration file.
+- 0f7876a: Adds the config command. It allows the user to set and get values from the configuration file.
 
   Examples:
 

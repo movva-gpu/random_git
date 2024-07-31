@@ -1,4 +1,5 @@
-dist
-build
-node_modules
-.changeset
+/dist
+/build
+/node_modules
+/.changeset
+package-lock.json
