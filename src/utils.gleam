@@ -1,4 +1,5 @@
 import argv
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import gleamyshell
@@ -53,5 +54,18 @@ pub fn hello_message(raw: Bool) -> Nil {
       color.println_dim(" (current version: N/A)\n")
     }
     True -> Nil
+  }
+}
+
+/// Thanks to [@hanako-eo](https://github.com/hanako-eo) for this function
+pub fn list_get(list: List(a), i: Int) -> Option(a) {
+  list_get_inner(list, i, 0)
+}
+
+fn list_get_inner(list: List(a), i: Int, acc_i: Int) -> Option(a) {
+  case list {
+    [] -> None
+    [el, ..] if i == acc_i -> Some(el)
+    [_, ..rest] -> list_get_inner(rest, i, acc_i + 1)
   }
 }

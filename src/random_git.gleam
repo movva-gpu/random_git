@@ -1,6 +1,7 @@
 import argv
 import commands/config
 import commands/help
+import commands/select
 import gleam/io
 import gleam/list
 import gleam/option
@@ -67,6 +68,8 @@ pub fn main() {
 
     ["config", "--raw", ..] -> config.help(bad_usage: True, raw: True)
     ["config", ..] -> config.help(bad_usage: True, raw: False)
+
+    ["select", ..opts] -> select.execute(opts: opts)
 
     ["--raw"] -> help.execute(raw: True, bad_usage: True)
     _ -> help.execute(raw: False, bad_usage: True)

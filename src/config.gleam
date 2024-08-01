@@ -20,4 +20,7 @@ pub const config_fields = [
   Category(name: "settings"),
   Field(name: "settings.auto_clone", ftype: BoolField),
   Field(name: "settings.forks", ftype: BoolField),
+  Field(name: "settings.private", ftype: BoolField),
+  Field(name: "settings.api", ftype: BoolField),
+  Field(name: "settings.always_open", ftype: BoolField),
 ]

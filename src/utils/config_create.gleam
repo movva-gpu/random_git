@@ -28,6 +28,9 @@ repos = \"default\"
 [settings]
 auto_clone = false
 forks = false
+private = false
+api = false
+always_open = false
 "
 
 pub fn create_config_file(config_file_path: String) -> Result(Nil, String) {

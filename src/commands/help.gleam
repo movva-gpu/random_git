@@ -1,4 +1,5 @@
 import commands/config
+import commands/select
 import gleam/io
 import gleam/list
 import gleam/option.{Some}
@@ -22,6 +23,12 @@ pub const all_commands = [
     name: config.name,
     description: config.description,
     arguments: config.arguments,
+    color: color.Aqua,
+  ),
+  commands.Command(
+    name: select.name,
+    description: select.description,
+    arguments: select.arguments,
     color: color.Aqua,
   ),
 ]
